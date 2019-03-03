@@ -3,13 +3,16 @@ declare(strict_types = 1);
 
 namespace Pematon\Session\DI;
 
-use Nette;
+use Nette\DI\CompilerExtension;
+use Nette\DI\Statement;
 
-class MysqlSessionHandlerExtension extends Nette\DI\CompilerExtension
+class MysqlSessionHandlerExtension extends CompilerExtension
 {
+
 	private $defaults = [
 		'tableName' => 'sessions',
 	];
+
 
 	public function loadConfiguration(): void
 	{
@@ -27,7 +30,8 @@ class MysqlSessionHandlerExtension extends Nette\DI\CompilerExtension
 		$sessionDefinition = $builder->getDefinition('session');
 		$sessionSetup = $sessionDefinition->getSetup();
 		# Prepend setHandler method to other possible setups (setExpiration) which would start session prematurely
-		array_unshift($sessionSetup, new Nette\DI\Statement('setHandler', array($definition)));
+		array_unshift($sessionSetup, new Statement('setHandler', array($definition)));
 		$sessionDefinition->setSetup($sessionSetup);
 	}
+
 }
