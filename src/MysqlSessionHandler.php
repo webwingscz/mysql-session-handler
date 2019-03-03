@@ -16,6 +16,9 @@ class MysqlSessionHandler implements SessionHandlerInterface
 	/** @var string */
 	private $tableName;
 
+	/** @var integer */
+	private $lockTimeout = 5;
+
 	/** @var Context */
 	private $context;
 
@@ -38,6 +41,12 @@ class MysqlSessionHandler implements SessionHandlerInterface
 	}
 
 
+	public function setLockTimeout(int $timeout): void
+	{
+		$this->lockTimeout = $timeout;
+	}
+
+
 	private function hash(string $id, bool $rawOutput = true): string
 	{
 		if (!isset($this->idHashes[$id])) {
@@ -51,7 +60,7 @@ class MysqlSessionHandler implements SessionHandlerInterface
 	{
 		if ($this->lockId === null) {
 			$this->lockId = $this->hash(session_id(), false);
-			while (!$this->context->query('SELECT GET_LOCK(?, 1) as `lock`', $this->lockId)->fetch()->lock);
+			$this->context->query('SELECT GET_LOCK(?, ?) as `lock`', $this->lockId, $this->lockTimeout);
 		}
 	}
 
