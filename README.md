@@ -30,5 +30,5 @@ After installation:
 
 ## Features
 
-- For security reasons, Session ID is stored in the database as an MD5 hash.
+- For security reasons, Session ID is stored in the database as an SHA-256 hash.
 - Multi-Master Replication friendly (tested in Master-Master row-based replication setup).

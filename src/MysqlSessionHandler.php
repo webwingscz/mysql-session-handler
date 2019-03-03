@@ -17,6 +17,8 @@ class MysqlSessionHandler implements \SessionHandlerInterface
 
 	private $lockId;
 
+	private $idHashes = [];
+
 	public function __construct(Nette\Database\Context $context)
 	{
 		$this->context = $context;
@@ -27,14 +29,17 @@ class MysqlSessionHandler implements \SessionHandlerInterface
 		$this->tableName = $tableName;
 	}
 
-	protected function hash($id)
+	protected function hash($id, $rawOutput = TRUE)
 	{
-		return md5($id);
+		if (!isset($this->idHashes[$id])) {
+			$this->idHashes[$id] = hash('sha256', $id, TRUE);
+		}
+		return ($rawOutput ? $this->idHashes[$id] : bin2hex($this->idHashes[$id]));
 	}
 
 	private function lock() {
 		if ($this->lockId === null) {
-			$this->lockId = md5(session_id());
+			$this->lockId = $this->hash(session_id(), FALSE);
 			while (!$this->context->query("SELECT GET_LOCK(?, 1) as `lock`", $this->lockId)->fetch()->lock);
 		}
 	}
