@@ -1,7 +1,7 @@
 <?php
 declare(strict_types = 1);
 
-namespace Pematon\Session;
+namespace Spaze\Session;
 
 use Nette\Database\Context;
 use SessionHandlerInterface;

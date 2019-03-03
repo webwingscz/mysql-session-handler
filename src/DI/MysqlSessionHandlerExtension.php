@@ -1,7 +1,7 @@
 <?php
 declare(strict_types = 1);
 
-namespace Pematon\Session\DI;
+namespace Spaze\Session\DI;
 
 use Nette\DI\CompilerExtension;
 use Nette\DI\Statement;
@@ -23,7 +23,7 @@ class MysqlSessionHandlerExtension extends CompilerExtension
 		$builder = $this->getContainerBuilder();
 
 		$definition = $builder->addDefinition($this->prefix('sessionHandler'))
-			->setClass('Pematon\Session\MysqlSessionHandler')
+			->setClass('Spaze\Session\MysqlSessionHandler')
 			->addSetup('setTableName', [$config['tableName']]);
 
 
