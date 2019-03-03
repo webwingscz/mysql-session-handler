@@ -32,3 +32,7 @@ After installation:
 
 - For security reasons, Session ID is stored in the database as an SHA-256 hash.
 - Multi-Master Replication friendly (tested in Master-Master row-based replication setup).
+
+## Credits
+
+This is heavily based on [MySQL Session handler](https://github.com/pematon/mysql-session-handler) by [Pematon](https://github.com/orgs/pematon/people) ([Marián Černý](https://github.com/mariancerny) & [Peter Knut](https://github.com/peterpp)), thanks!
