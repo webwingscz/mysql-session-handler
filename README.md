@@ -4,7 +4,7 @@ Custom PHP session handler for [Nette Framework](http://nette.org/) that uses My
 
 ## Requirements
 
-- [nette/database](https://github.com/nette/database) 2.2+
+- [nette/database](https://github.com/nette/database) 2.4+
 - PHP 7.2+
 
 ## Installation
@@ -12,7 +12,7 @@ Custom PHP session handler for [Nette Framework](http://nette.org/) that uses My
 Preferred way to install spaze/mysql-session-handler is by using [Composer](http://getcomposer.org/):
 
 ```sh
-$ composer require spaze/mysql-session-handler:~1.0
+$ composer require spaze/mysql-session-handler
 ```
 
 ## Setup
