@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 
 namespace Pematon\Session\DI;
 
@@ -10,7 +11,7 @@ class MysqlSessionHandlerExtension extends Nette\DI\CompilerExtension
 		'tableName' => 'sessions',
 	];
 
-	public function loadConfiguration()
+	public function loadConfiguration(): void
 	{
 		parent::loadConfiguration();
 

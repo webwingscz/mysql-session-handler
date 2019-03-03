@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 
 namespace Pematon\Session;
 
@@ -24,12 +25,12 @@ class MysqlSessionHandler implements \SessionHandlerInterface
 		$this->context = $context;
 	}
 
-	public function setTableName($tableName)
+	public function setTableName(string $tableName): void
 	{
 		$this->tableName = $tableName;
 	}
 
-	protected function hash($id, $rawOutput = TRUE)
+	protected function hash(string $id, bool $rawOutput = TRUE): string
 	{
 		if (!isset($this->idHashes[$id])) {
 			$this->idHashes[$id] = hash('sha256', $id, TRUE);
@@ -37,14 +38,16 @@ class MysqlSessionHandler implements \SessionHandlerInterface
 		return ($rawOutput ? $this->idHashes[$id] : bin2hex($this->idHashes[$id]));
 	}
 
-	private function lock() {
+	private function lock(): void
+	{
 		if ($this->lockId === null) {
 			$this->lockId = $this->hash(session_id(), FALSE);
 			while (!$this->context->query("SELECT GET_LOCK(?, 1) as `lock`", $this->lockId)->fetch()->lock);
 		}
 	}
 
-	private function unlock() {
+	private function unlock(): void
+	{
 		if ($this->lockId === null) {
 			return;
 		}
@@ -53,21 +56,30 @@ class MysqlSessionHandler implements \SessionHandlerInterface
 		$this->lockId = null;
 	}
 
-	public function open($savePath, $name)
+	/**
+	 * @param string $savePath
+	 * @param string $name
+	 * @return boolean
+	 */
+	public function open($savePath, $name): bool
 	{
 		$this->lock();
 
 		return TRUE;
 	}
 
-	public function close()
+	public function close(): bool
 	{
 		$this->unlock();
 
 		return TRUE;
 	}
 
-	public function destroy($sessionId)
+	/**
+	 * @param string $sessionId
+	 * @return boolean
+	 */
+	public function destroy($sessionId): bool
 	{
 		$hashedSessionId = $this->hash($sessionId);
 
@@ -78,7 +90,11 @@ class MysqlSessionHandler implements \SessionHandlerInterface
 		return TRUE;
 	}
 
-	public function read($sessionId)
+	/**
+	 * @param string $sessionId
+	 * @return string
+	 */
+	public function read($sessionId): string
 	{
 		$this->lock();
 
@@ -93,7 +109,12 @@ class MysqlSessionHandler implements \SessionHandlerInterface
 		return '';
 	}
 
-	public function write($sessionId, $sessionData)
+	/**
+	 * @param string $sessionId
+	 * @param string $sessionData
+	 * @return boolean
+	 */
+	public function write($sessionId, $sessionData): bool
 	{
 		$this->lock();
 
@@ -124,7 +145,11 @@ class MysqlSessionHandler implements \SessionHandlerInterface
 		return TRUE;
 	}
 
-	public function gc($maxLifeTime)
+	/**
+	 * @param  int    $maxLifeTime [description]
+	 * @return boolean
+	 */
+	public function gc($maxLifeTime): bool
 	{
 		$maxTimestamp = time() - $maxLifeTime;
 
