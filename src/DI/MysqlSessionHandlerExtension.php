@@ -38,7 +38,7 @@ class MysqlSessionHandlerExtension extends CompilerExtension
 		$sessionDefinition = $builder->getDefinition('session');
 		$sessionSetup = $sessionDefinition->getSetup();
 		# Prepend setHandler method to other possible setups (setExpiration) which would start session prematurely
-		array_unshift($sessionSetup, new Statement('setHandler', array($definition)));
+		array_unshift($sessionSetup, new Statement('setHandler', [$definition]));
 		$sessionDefinition->setSetup($sessionSetup);
 	}
 

@@ -76,16 +76,16 @@ class MysqlSessionHandler implements SessionHandlerInterface
 	private function hash(string $id, bool $rawOutput = true): string
 	{
 		if (!isset($this->idHashes[$id])) {
-			$this->idHashes[$id] = hash('sha256', $id, true);
+			$this->idHashes[$id] = \hash('sha256', $id, true);
 		}
-		return ($rawOutput ? $this->idHashes[$id] : bin2hex($this->idHashes[$id]));
+		return ($rawOutput ? $this->idHashes[$id] : \bin2hex($this->idHashes[$id]));
 	}
 
 
 	private function lock(): void
 	{
 		if ($this->lockId === null) {
-			$this->lockId = $this->hash(session_id(), false);
+			$this->lockId = $this->hash(\session_id(), false);
 			$this->context->query('SELECT GET_LOCK(?, ?) as `lock`', $this->lockId, $this->lockTimeout);
 		}
 	}
@@ -161,7 +161,7 @@ class MysqlSessionHandler implements SessionHandlerInterface
 	{
 		$this->lock();
 		$hashedSessionId = $this->hash($sessionId);
-		$time = time();
+		$time = \time();
 
 		if (!isset($this->data[$sessionId]) || $this->data[$sessionId] !== $sessionData) {
 			if ($this->encryptionService) {
@@ -197,7 +197,7 @@ class MysqlSessionHandler implements SessionHandlerInterface
 	 */
 	public function gc($maxLifeTime): bool
 	{
-		$maxTimestamp = time() - $maxLifeTime;
+		$maxTimestamp = \time() - $maxLifeTime;
 
 		// Try to avoid a conflict when running garbage collection simultaneously on two
 		// MySQL servers at a very busy site in a master-master replication setup by
@@ -209,7 +209,7 @@ class MysqlSessionHandler implements SessionHandlerInterface
 		// subtraction on server 2.
 		$serverId = $this->context->query('SELECT @@server_id as `server_id`')->fetch()->server_id;
 		if ($serverId > 1 && $serverId < 10) {
-			$maxTimestamp -= ($serverId - 1) * max(86400, $maxLifeTime / 10);
+			$maxTimestamp -= ($serverId - 1) * \max(86400, $maxLifeTime / 10);
 		}
 
 		$this->context->table($this->tableName)
