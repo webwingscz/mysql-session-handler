@@ -21,6 +21,9 @@ class MysqlSessionHandler implements SessionHandlerInterface
 	/** @var integer */
 	private $lockTimeout = 5;
 
+	/** @var integer */
+	private $unchangedUpdateDelay = 300;
+
 	/** @var Context */
 	private $context;
 
@@ -55,6 +58,12 @@ class MysqlSessionHandler implements SessionHandlerInterface
 	public function setLockTimeout(int $timeout): void
 	{
 		$this->lockTimeout = $timeout;
+	}
+
+
+	public function setUnchangedUpdateDelay(int $delay): void
+	{
+		$this->unchangedUpdateDelay = $delay;
 	}
 
 
@@ -170,9 +179,9 @@ class MysqlSessionHandler implements SessionHandlerInterface
 					'data' => $sessionData,
 				]);
 			}
-		} elseif ($time - $this->row->timestamp > 300) {
+		} elseif ($this->unchangedUpdateDelay === 0 || $time - $this->row->timestamp > $this->unchangedUpdateDelay) {
 			// Optimization: When data has not been changed, only update
-			// the timestamp after 5 minutes.
+			// the timestamp after a configured delay, if any.
 			$this->row->update([
 				'timestamp' => $time,
 			]);
