@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace Spaze\Session;
 
 use Nette\Database\Context;
+use Nette\Database\Table\ActiveRow;
 use SessionHandlerInterface;
 use Spaze\Encryption\Symmetric\StaticKey as StaticKeyEncryption;
 
@@ -28,6 +29,12 @@ class MysqlSessionHandler implements SessionHandlerInterface
 
 	/** @var string[] */
 	private $idHashes = [];
+
+	/** @var ActiveRow */
+	private $row;
+
+	/** @var string[] */
+	private $data = [];
 
 	/** @var StaticKeyEncryption */
 	private $encryptionService;
@@ -126,14 +133,11 @@ class MysqlSessionHandler implements SessionHandlerInterface
 	{
 		$this->lock();
 		$hashedSessionId = $this->hash($sessionId);
-		$row = $this->context->table($this->tableName)->get($hashedSessionId);
+		$this->row = $this->context->table($this->tableName)->get($hashedSessionId);
 
-		if ($row) {
-			if ($this->encryptionService) {
-				return $sessionData = $this->encryptionService->decrypt($row->data);
-			} else {
-				return $row->data;
-			}
+		if ($this->row) {
+			$this->data[$sessionId] = ($this->encryptionService ? $this->encryptionService->decrypt($this->row->data) : $this->row->data);
+			return $this->data[$sessionId];
 		}
 		return '';
 	}
@@ -150,28 +154,27 @@ class MysqlSessionHandler implements SessionHandlerInterface
 		$hashedSessionId = $this->hash($sessionId);
 		$time = time();
 
-		if ($this->encryptionService) {
-			$sessionData = $this->encryptionService->encrypt($sessionData);
-		}
-
-		if ($row = $this->context->table($this->tableName)->get($hashedSessionId)) {
-			if ($row->data !== $sessionData) {
+		if (!isset($this->data[$sessionId]) || $this->data[$sessionId] !== $sessionData) {
+			if ($this->encryptionService) {
+				$sessionData = $this->encryptionService->encrypt($sessionData);
+			}
+			if ($row = $this->context->table($this->tableName)->get($hashedSessionId)) {
 				$row->update([
 					'timestamp' => $time,
 					'data' => $sessionData,
 				]);
-			} elseif ($time - $row->timestamp > 300) {
-				// Optimization: When data has not been changed, only update
-				// the timestamp after 5 minutes.
-				$row->update([
+			} else {
+				$this->context->table($this->tableName)->insert([
+					'id' => $hashedSessionId,
 					'timestamp' => $time,
+					'data' => $sessionData,
 				]);
 			}
-		} else {
-			$this->context->table($this->tableName)->insert([
-				'id' => $hashedSessionId,
+		} elseif ($time - $this->row->timestamp > 300) {
+			// Optimization: When data has not been changed, only update
+			// the timestamp after 5 minutes.
+			$this->row->update([
 				'timestamp' => $time,
-				'data' => $sessionData,
 			]);
 		}
 
