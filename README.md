@@ -4,16 +4,15 @@ Custom PHP session handler for [Nette Framework](http://nette.org/) that uses My
 
 ## Requirements
 
-- [nette/database](https://github.com/nette/database) 2.4+
 - [nette/utils](https://github.com/nette/utils) 2.4+
-- PHP 7.2+
+- PHP 7.3+
 
 ## Installation
 
-Preferred way to install spaze/mysql-session-handler is by using [Composer](http://getcomposer.org/):
+Preferred way to install webwings/mysql-session-handler is by using [Composer](http://getcomposer.org/):
 
 ```sh
-$ composer require spaze/mysql-session-handler
+$ composer require webwings/mysql-session-handler
 ```
 
 ## Setup
@@ -26,7 +25,7 @@ After installation:
 
 ```neon
 	extensions:
-		sessionHandler: Spaze\Session\DI\MysqlSessionHandlerExtension
+		sessionHandler: Webwings\Session\DI\MysqlSessionHandlerExtension
 ```
 
 ## Features
@@ -66,4 +65,4 @@ Use it to store for example user id to which the session belongs to.
 
 ## Credits
 
-This is heavily based on [MySQL Session handler](https://github.com/pematon/mysql-session-handler) by [Pematon](https://github.com/orgs/pematon/people) ([Marián Černý](https://github.com/mariancerny) & [Peter Knut](https://github.com/peterpp)), thanks!
+This is heavily based on [MySQL Session handler](https://github.com/pematon/mysql-session-handler) by [Pematon](https://github.com/orgs/pematon/people) ([Marián Černý](https://github.com/mariancerny) & [Peter Knut](https://github.com/peterpp) & [Michal Špaček](https://github.com/spaze))  thanks!

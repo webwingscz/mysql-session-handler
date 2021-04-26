@@ -1,6 +1,6 @@
 <?php
 
-namespace Spaze\Session\Exception;
+namespace Webwings\Session\Exception;
 
 final class StorageException extends \Exception
 {

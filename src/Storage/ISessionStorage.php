@@ -1,8 +1,8 @@
 <?php
 
-namespace Spaze\Session\Storage;
+namespace Webwings\Session\Storage;
 
-use Spaze\Session\Exception\StorageException;
+use Webwings\Session\Exception\StorageException;
 
 interface ISessionStorage
 {

@@ -1,12 +1,12 @@
 <?php
 declare(strict_types = 1);
 
-namespace Spaze\Session;
+namespace Webwings\Session;
 
 use Nette\SmartObject;
 use SessionHandlerInterface;
 use Spaze\Encryption\Symmetric\StaticKey as StaticKeyEncryption;
-use Spaze\Session\Storage\ISessionStorage;
+use Webwings\Session\Storage\ISessionStorage;
 
 /**
  * Storing session to database.
