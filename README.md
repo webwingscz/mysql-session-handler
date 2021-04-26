@@ -28,6 +28,13 @@ After installation:
 		sessionHandler: Webwings\Session\DI\MysqlSessionHandlerExtension
 ```
 
+3) Setup DatabaseStorage
+```neon
+sessionHandler:
+    storage: Webwings\Session\Storage\DibiDatabaseStorage(@dibi.connection, 'sessions')
+
+```
+
 ## Features
 
 - For security reasons, Session ID is stored in the database as an SHA-256 hash.
