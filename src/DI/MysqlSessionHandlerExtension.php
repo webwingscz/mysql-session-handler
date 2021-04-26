@@ -1,16 +1,18 @@
 <?php
 declare(strict_types = 1);
 
-namespace Spaze\Session\DI;
+namespace Webwings\Session\DI;
 
 use Nette\DI\CompilerExtension;
 use Nette\DI\Statement;
+use Webwings\Session\MysqlSessionHandler;
+use Webwings\Session\Storage\NetteDatabaseStorage;
 
 class MysqlSessionHandlerExtension extends CompilerExtension
 {
 
 	private $defaults = [
-		'tableName' => 'sessions',
+	    'storage' => NetteDatabaseStorage::class,
 		'lockTimeout' => 5,
 		'unchangedUpdateDelay' => 300,
 		'encryptionService' => null,
@@ -24,8 +26,8 @@ class MysqlSessionHandlerExtension extends CompilerExtension
 		$builder = $this->getContainerBuilder();
 
 		$definition = $builder->addDefinition($this->prefix('sessionHandler'))
-			->setClass('Spaze\Session\MysqlSessionHandler')
-			->addSetup('setTableName', [$this->config['tableName']])
+			->setType(MysqlSessionHandler::class)
+            ->setArguments(['storage'=>$this->config['storage']])
 			->addSetup('setLockTimeout', [$this->config['lockTimeout']])
 			->addSetup('setUnchangedUpdateDelay', [$this->config['unchangedUpdateDelay']]);
 
